@@ -18,14 +18,21 @@ import Growl
 
 class StackOverflowFetcher:
     def __init__(self):
+        self.target_url = 'http://stackoverflow.com/questions/tagged/django'
+        
         self.get_or_create_database()
+        
         self.growl = Growl.GrowlNotifier(applicationName='StackOverflowChecker', notifications=['new'])
         self.growl.register()
         
         
+        
+        
     def get_django_questions(self):
-        #self.growl.notify(noteType='new', title="Rawrrrr", description="Script is running...")
-        url = 'http://stackoverflow.com/questions/tagged/django'
+        """
+        Parse target URL for new questions.
+        """
+        url = self.target_url
         html = urllib2.urlopen(url).read()
         soup = BeautifulSoup.BeautifulSoup(html)
         
@@ -45,6 +52,11 @@ class StackOverflowFetcher:
         self.close_connection()
         
     def get_or_create_database(self):
+        """
+        Check if database file exists. Create if not.
+        Open file and send query. 
+        If query fails, create tables. 
+        """
         path = os.path.join(os.path.dirname(__file__), 'questions.db')
         #print "Connecting to database %s" % path
         

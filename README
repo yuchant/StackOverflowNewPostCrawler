@@ -1,0 +1,9 @@
+# Quick script showing the power of python
+
+From start to completion in 15 minutes, including finding the Growl python bindings and determining how it works
+
+
+Dependencies:
+- BeautifulSoup
+- Growl (osx / windows) 
+
