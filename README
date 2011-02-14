@@ -1,4 +1,6 @@
-# Quick script showing the power of python
+# Quick script showing the power of python.
+
+Note: Does NOT use the stackexchange API, simply HTML parsing.
 
 From start to completion in 15 minutes, including finding the Growl python bindings and determining how it works
 
