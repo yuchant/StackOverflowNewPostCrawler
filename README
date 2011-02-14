@@ -7,3 +7,10 @@ Dependencies:
 - BeautifulSoup
 - Growl (osx / windows) 
 
+
+Use:
+- Specify a target url to crawl in __init__ method 
+  (default set to "http://www.stackoverflow.com/questions/tagged/django)
+
+- run script: `python stack_overflow_checker`
+- run as cronjob every X minutes.
