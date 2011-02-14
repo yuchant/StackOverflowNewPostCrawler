@@ -2,30 +2,26 @@
 Stack Overflow Post Checker
 ===========================
 
+Parse stackoverflow HTML for questions, store in sqlite database
+and send notifications of new questions.
 
 By Yuji Tomita
 2/7/2011
 """
 import os
 import sqlite3
-import urllib, urllib2
+import urllib2
 import BeautifulSoup
 import Growl
-
-
-
 
 
 class StackOverflowFetcher:
     def __init__(self):
         self.target_url = 'http://stackoverflow.com/questions/tagged/django'
-        
         self.get_or_create_database()
         
         self.growl = Growl.GrowlNotifier(applicationName='StackOverflowChecker', notifications=['new'])
         self.growl.register()
-        
-        
         
         
     def get_django_questions(self):
@@ -43,13 +39,12 @@ class StackOverflowFetcher:
             link = element.get('href')
             question = element.text
             
-            new = self.check_if_new(link)
-            
-            if new:
+            if self.check_if_new(link):
                 self.growl.notify(noteType='new', title='New Stackoverflow Post', description=question, sticky=True)
                 self.record_question(link, question)
                 
         self.close_connection()
+        
         
     def get_or_create_database(self):
         """
@@ -58,7 +53,6 @@ class StackOverflowFetcher:
         If query fails, create tables. 
         """
         path = os.path.join(os.path.dirname(__file__), 'questions.db')
-        #print "Connecting to database %s" % path
         
         try:
             f = open(path)
@@ -92,6 +86,7 @@ class StackOverflowFetcher:
     def close_connection(self):
         self.conn.commit()
         self.conn.close()
+
 
 stack = StackOverflowFetcher()
 stack.get_django_questions()
