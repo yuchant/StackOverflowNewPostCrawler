@@ -44,13 +44,11 @@ class StackOverflowFetcher:
                 link = element.get('href')
                 question = element.text
             
-                if self.check_if_new(link):
+                if self.is_new_link(link):
                     self.growl.notify(noteType='new', title='[%s] StackOverflow Post' % tag, description=question, sticky=True)
                     self.record_question(link, question)
-                
-        
-        
-        
+                    
+                    
     def get_or_create_database(self):
         """
         Check if database file exists. Create if not.
@@ -77,7 +75,7 @@ class StackOverflowFetcher:
         self.conn.execute('CREATE TABLE questions(link VARCHAR(400), text VARCHAR(300));')
         
         
-    def check_if_new(self, link):
+    def is_new_link(self, link):
         results = self.conn.execute('SELECT * FROM questions WHERE questions.link = "%s";' % link).fetchall()
         if not results:
             return True
