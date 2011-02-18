@@ -11,10 +11,10 @@ Dependencies:
 
 
 Use:
-- Specify tags in `tags` attribute
+- Specify a tuple of (tagname, boolean sticky) in tags attriibute.
 
 default is...
-self.tags = ['django', 'python']
+self.tags = [('django', True), ('python', False)]
 
 - run script: `python stack_overflow_checker`
 - run as cronjob every X minutes.

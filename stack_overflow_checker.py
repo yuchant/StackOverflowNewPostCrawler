@@ -23,7 +23,7 @@ class StackOverflowFetcher:
         self.growl = Growl.GrowlNotifier(applicationName='StackOverflowChecker', notifications=['new'])
         self.growl.register()
         
-        self.tags = ['django', 'python']
+        self.tags = [('django', True), ('python', False)]
         self.get_questions()
         self.close_connection()
         
@@ -32,7 +32,7 @@ class StackOverflowFetcher:
         Parse target URL for new questions.
         """
         while self.tags:
-            tag = self.tags.pop()
+            tag, sticky = self.tags.pop()
             url = self.base_url + tag
             html = urllib2.urlopen(url).read()
             soup = BeautifulSoup.BeautifulSoup(html)
@@ -45,7 +45,7 @@ class StackOverflowFetcher:
                 question = element.text
             
                 if self.is_new_link(link):
-                    self.growl.notify(noteType='new', title='[%s] StackOverflow Post' % tag, description=question, sticky=True)
+                    self.growl.notify(noteType='new', title='[%s] StackOverflow Post' % tag, description=question, sticky=sticky)
                     self.record_question(link, question)
                     
                     
