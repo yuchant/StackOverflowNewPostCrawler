@@ -17,18 +17,22 @@ import Growl
 
 class StackOverflowFetcher:
     def __init__(self):
-        self.target_url = 'http://stackoverflow.com/questions/tagged/django'
+        self.base_url = 'http://stackoverflow.com/questions/tagged/'
         self.get_or_create_database()
         
         self.growl = Growl.GrowlNotifier(applicationName='StackOverflowChecker', notifications=['new'])
         self.growl.register()
         
+        for tag in ('django','python'):
+            self.get_questions(tag)
+            
+        self.close_connection()
         
-    def get_django_questions(self):
+    def get_questions(self, tag):
         """
         Parse target URL for new questions.
         """
-        url = self.target_url
+        url = self.base_url + tag
         html = urllib2.urlopen(url).read()
         soup = BeautifulSoup.BeautifulSoup(html)
         
@@ -40,10 +44,10 @@ class StackOverflowFetcher:
             question = element.text
             
             if self.check_if_new(link):
-                self.growl.notify(noteType='new', title='New Stackoverflow Post', description=question, sticky=True)
+                self.growl.notify(noteType='new', title='[%s] StackOverflow Post' % tag, description=question, sticky=True)
                 self.record_question(link, question)
                 
-        self.close_connection()
+        
         
         
     def get_or_create_database(self):
@@ -89,4 +93,3 @@ class StackOverflowFetcher:
 
 
 stack = StackOverflowFetcher()
-stack.get_django_questions()
