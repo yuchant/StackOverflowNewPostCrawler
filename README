@@ -11,8 +11,10 @@ Dependencies:
 
 
 Use:
-- Specify a target url to crawl in __init__ method 
-  (default set to "http://www.stackoverflow.com/questions/tagged/django)
+- Specify tags in `tags` attribute
+
+default is...
+self.tags = ['django', 'python']
 
 - run script: `python stack_overflow_checker`
 - run as cronjob every X minutes.

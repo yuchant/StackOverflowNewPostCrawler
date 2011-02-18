@@ -23,29 +23,30 @@ class StackOverflowFetcher:
         self.growl = Growl.GrowlNotifier(applicationName='StackOverflowChecker', notifications=['new'])
         self.growl.register()
         
-        for tag in ('django','python'):
-            self.get_questions(tag)
-            
+        self.tags = ['django', 'python']
+        self.get_questions()
         self.close_connection()
         
-    def get_questions(self, tag):
+    def get_questions(self):
         """
         Parse target URL for new questions.
         """
-        url = self.base_url + tag
-        html = urllib2.urlopen(url).read()
-        soup = BeautifulSoup.BeautifulSoup(html)
+        while self.tags:
+            tag = self.tags.pop()
+            url = self.base_url + tag
+            html = urllib2.urlopen(url).read()
+            soup = BeautifulSoup.BeautifulSoup(html)
         
-        questions = soup.findAll('h3')
+            questions = soup.findAll('h3')
         
-        for question in questions:
-            element = question.find('a')
-            link = element.get('href')
-            question = element.text
+            for question in questions:
+                element = question.find('a')
+                link = element.get('href')
+                question = element.text
             
-            if self.check_if_new(link):
-                self.growl.notify(noteType='new', title='[%s] StackOverflow Post' % tag, description=question, sticky=True)
-                self.record_question(link, question)
+                if self.check_if_new(link):
+                    self.growl.notify(noteType='new', title='[%s] StackOverflow Post' % tag, description=question, sticky=True)
+                    self.record_question(link, question)
                 
         
         
