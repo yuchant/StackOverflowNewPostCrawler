@@ -23,7 +23,7 @@ class StackOverflowFetcher:
         self.growl = Growl.GrowlNotifier(applicationName='StackOverflowChecker', notifications=['new'])
         self.growl.register()
         
-        self.tags = [('django', True), ('python', False)]
+        self.tags = [('django', True), ]#('python', False)
         self.get_questions()
         self.close_connection()
         
@@ -90,5 +90,8 @@ class StackOverflowFetcher:
         self.conn.commit()
         self.conn.close()
 
-
-stack = StackOverflowFetcher()
+try:
+    stack = StackOverflowFetcher()
+except:
+    pass
+    # don't want to hear any errors, timeouts, etc.
