@@ -25,7 +25,7 @@ class StackOverflowFetcher:
             notifications=['new'],)
         self.growl.register()
         
-        self.tags = [('django', True), ]#('python', False)
+        self.tags = [('django', True), ('python', False)]
         self.get_questions()
         self.close_connection()
 
@@ -50,7 +50,7 @@ class StackOverflowFetcher:
                         title = question,
                         description = question,
                         icon = "http://example.com/icon.png",
-                        sticky = True,
+                        sticky = sticky,
                         priority = 1,
                         callback = 'http://stackoverflow.com{0}'.format(link),
                     )
