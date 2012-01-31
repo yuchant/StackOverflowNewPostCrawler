@@ -7,7 +7,7 @@ From start to completion in 15 minutes, including finding the Growl python bindi
 
 Dependencies:
 - BeautifulSoup
-- Growl (osx / windows) 
+- Growl (osx / windows)  (now the gntp package)
 
 
 Use:

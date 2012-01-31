@@ -12,7 +12,7 @@ import os
 import sqlite3
 import urllib2
 import BeautifulSoup
-import Growl
+from gntp.notifier import GrowlNotifier
 
 
 class StackOverflowFetcher:
@@ -20,13 +20,15 @@ class StackOverflowFetcher:
         self.base_url = 'http://stackoverflow.com/questions/tagged/'
         self.get_or_create_database()
         
-        self.growl = Growl.GrowlNotifier(applicationName='StackOverflowChecker', notifications=['new'])
+        self.growl = GrowlNotifier(
+            applicationName='StackOverflowChecker',
+            notifications=['new'],)
         self.growl.register()
         
         self.tags = [('django', True), ]#('python', False)
         self.get_questions()
         self.close_connection()
-        
+
     def get_questions(self):
         """
         Parse target URL for new questions.
@@ -36,19 +38,24 @@ class StackOverflowFetcher:
             url = self.base_url + tag
             html = urllib2.urlopen(url).read()
             soup = BeautifulSoup.BeautifulSoup(html)
-        
             questions = soup.findAll('h3')
-        
             for question in questions:
                 element = question.find('a')
                 link = element.get('href')
                 question = element.text
             
                 if self.is_new_link(link):
-                    self.growl.notify(noteType='new', title='[%s] StackOverflow Post' % tag, description=question, sticky=sticky)
+                    self.growl.notify(
+                        noteType = "new",
+                        title = question,
+                        description = question,
+                        icon = "http://example.com/icon.png",
+                        sticky = True,
+                        priority = 1,
+                        callback = 'http://stackoverflow.com{0}'.format(link),
+                    )
                     self.record_question(link, question)
-                    
-                    
+
     def get_or_create_database(self):
         """
         Check if database file exists. Create if not.
@@ -70,10 +77,8 @@ class StackOverflowFetcher:
         except sqlite3.OperationalError:
             self.create_database()
             
-            
     def create_database(self):
         self.conn.execute('CREATE TABLE questions(link VARCHAR(400), text VARCHAR(300));')
-        
         
     def is_new_link(self, link):
         results = self.conn.execute('SELECT * FROM questions WHERE questions.link = "%s";' % link).fetchall()
@@ -81,15 +86,12 @@ class StackOverflowFetcher:
             return True
         return False
     
-    
     def record_question(self, link, question):
         results = self.conn.execute('INSERT INTO questions(link, text) VALUES ("%s", "%s");' % (link, question))
-    
     
     def close_connection(self):
         self.conn.commit()
         self.conn.close()
-
 try:
     stack = StackOverflowFetcher()
 except:
